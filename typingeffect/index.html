@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Typing Effect</title>
+    <link rel="icon" href="https://pic.img.wang/img/2024/12/04/6750158187787.jpg" type="image/x-icon">
+    <style>
+        /* 引入字体 */
+        @font-face {
+            font-family: "DripOctober-vm0JA";
+            src: url("fonts/DripOctober-vm0JA.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        @font-face {
+            font-family: "Muyao-Softbrush";
+            src: url("fonts/Muyao-Softbrush.ttf") format("truetype");
+            font-weight: normal;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* 设置页面主体样式 */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            /* 背景渐变 */
+            font-family: "Muyao-Softbrush", "DripOctober-vm0JA";
+            /* 设置字体 */
+            color: #3f51b5;
+            /* 文字颜色 */
+            overflow: hidden;
+        }
+
+        /* 设置打字文本容器样式 */
+        .typing-container {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: calc(2vw + 2vh + 15px);
+            /* 动态计算字体大小 */
+            white-space: nowrap;
+            padding: 20px 40px;
+            /* 设置内边距 */
+            border: 5px solid #ff4081;
+            /* 粉色边框 */
+            border-radius: 10px;
+            background-color: #ffffff;
+            /* 背景白色 */
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            /* 设置阴影 */
+            max-width: calc(100% - 80px);
+            /* 最大宽度 */
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+
+        /* 设置打字文本的动画效果 */
+        #typing-text {
+            display: inline-block;
+            animation: neon-flicker 1.5s infinite alternate;
+            /* 字体闪烁效果 */
+        }
+
+        /* 光标的样式和动画 */
+        .cursor {
+            display: inline-block;
+            width: 6px;
+            height: 1em;
+            background-color: #3f51b5;
+            margin-left: 5px;
+            animation: blink 0.7s step-end infinite, glow 1.5s infinite alternate;
+        }
+
+        /* 光标闪烁动画 */
+        @keyframes blink {
+            50% {
+                background-color: transparent;
+            }
+        }
+
+        /* 光标发光效果 */
+        @keyframes glow {
+            0% {
+                box-shadow: 0 0 5px #3f51b5, 0 0 10px #3f51b5;
+            }
+
+            100% {
+                box-shadow: 0 0 20px #ff4081, 0 0 30px #ff4081;
+            }
+        }
+
+        /* 打字文本的闪烁效果 */
+        @keyframes neon-flicker {
+
+            0%,
+            18%,
+            22%,
+            25%,
+            53%,
+            57%,
+            100% {
+                opacity: 1;
+            }
+
+            20%,
+            24%,
+            55% {
+                opacity: 0.4;
+            }
+        }
+
+        /* 移动端适配 */
+        @media screen and (max-width: 768px) {
+            .typing-container {
+                font-size: calc(4vw + 4vh + 10px);
+                /* 移动端适应字体 */
+                padding: 10px 20px;
+                /* 调整内边距 */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 打字效果的容器 -->
+    <div class="typing-container">
+        <span id="typing-text"></span> <!-- 打字内容 -->
+        <div class="cursor"></div> <!-- 光标 -->
+    </div>
+
+    <script>
+        // 设置打字的文本内容
+        const text = "至此已成艺术🤡"; // Customize your text here
+        const typingText = document.getElementById("typing-text"); // 获取打字文本元素
+        const container = document.querySelector(".typing-container"); // 获取容器元素
+
+        let index = 0; // 当前文本的索引
+        let typing = true; // 是否正在打字
+
+        // 根据容器的宽度动态调整字体大小
+        function adjustFontSize() {
+            const containerWidth = container.offsetWidth;
+            const viewportWidth = window.innerWidth;
+
+            if (containerWidth > viewportWidth * 0.9) {
+                container.style.fontSize = `calc(3vw + 3vh + 15px)`; // 容器太宽时增大字体
+            } else {
+                container.style.fontSize = `calc(2vw + 2vh + 15px)`; // 恢复正常字体大小
+            }
+        }
+
+        // 打字函数，每次打印一个字符
+        function type() {
+            if (index < text.length) {
+                typingText.textContent = text.substring(0, index + 1); // 更新显示的文本
+                index++; // 增加字符索引
+                setTimeout(type, 150); // 控制打字速度
+            } else {
+                setTimeout(deleteText, 1500); // 打字完成后延时开始删除文本
+            }
+            adjustFontSize(); // 调整字体大小
+        }
+
+        // 删除文本函数，每次删除一个字符
+        function deleteText() {
+            if (index > 0) {
+                typingText.textContent = text.substring(0, index - 1); // 更新显示的文本
+                index--; // 减少字符索引
+                setTimeout(deleteText, 150); // 控制删除速度
+            } else {
+                setTimeout(() => {
+                    index = 0; // 重置索引
+                    typingText.textContent = ""; // 清空文本
+                    setTimeout(type, 150); // 删除完后重新开始打字
+                }, 1500); // 延时后重新开始
+            }
+        }
+
+        // 监听窗口大小调整，实时调整字体大小
+        window.addEventListener("resize", adjustFontSize);
+
+        // 开始打字效果
+        type();
+    </script>
+</body>
+
+</html>
